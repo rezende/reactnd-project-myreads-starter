@@ -11,21 +11,33 @@ class BooksApp extends React.Component {
     wantToRead: [],
     currentlyReading: [],
     read: [],
-    none: [],
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
+  }
+  getShelf = (book) => {
+    // If it's a user's book, it will have a shelf 
+    // property
+    if (book.shelf !== undefined) {
+      return book.shelf
+    }
+    // If it comes from the search results we need
+    // to check if it's already on the user's library
+    // to display the right option on the dropdown on 
+    // the search results.
+    const bookId = book.id
+    return (
+      this.state.wantToRead.filter((b) => b.id === bookId).length > 0 ? 
+        "wantToRead" : this.state.currentlyReading.filter((b) => b.id === bookId).length > 0 ? 
+          "currentlyReading" : this.state.read.filter((b) => b.id === bookId).length > 0 ? 
+            "read" : "none"
+    )
   }
   removeFromShelf(book, shelf) {
     const bookId = book.id
     return shelf.filter(b => b.id !== bookId)
   }
-  changeBookShelf = (book, shelf) => {
-    const newShelf = shelf
-    this.state[newShelf].push(book)
+  changeBookShelf = (book, newShelf) => {
+    if (newShelf !== "none") {
+      this.state[newShelf].push(book)
+    }
     const previousShelf = book.shelf
     if (previousShelf !== undefined) {
       this.setState((previousState) => {{
@@ -34,7 +46,8 @@ class BooksApp extends React.Component {
         return obj
       }})
     }
-    BooksAPI.update(book, shelf)
+    BooksAPI.update(book, newShelf)
+    book.shelf = newShelf
   }
   componentDidMount() {
     BooksAPI.getAll()
@@ -60,16 +73,19 @@ class BooksApp extends React.Component {
                   title='Currently Reading'
                   books={this.state.currentlyReading}
                   changeBookShelf={this.changeBookShelf}
+                  getShelf={this.getShelf}
                 />
                 <BookShelf 
                   title='Want To Read'
                   books={this.state.wantToRead}
                   changeBookShelf={this.changeBookShelf}
+                  getShelf={this.getShelf}
                 />
                 <BookShelf 
                   title='Read'
                   books={this.state.read}
                   changeBookShelf={this.changeBookShelf}
+                  getShelf={this.getShelf}
                 />
               </div>
             </div>
@@ -83,6 +99,7 @@ class BooksApp extends React.Component {
         <Route path='/search' render={() => (
           <SearchBooks 
             changeBookShelf={this.changeBookShelf}
+            getShelf={this.getShelf}
           />
         )} /> 
       </div>

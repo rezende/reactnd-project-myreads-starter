@@ -20,7 +20,7 @@ class SearchBooks extends React.Component {
   }
   render() {
     const { query, foundBooks } = this.state
-    const { changeBookShelf } = this.props
+    const { changeBookShelf, getShelf } = this.props
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -36,11 +36,12 @@ class SearchBooks extends React.Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {foundBooks !== undefined ? foundBooks.map((book) => (
+            {foundBooks !== undefined && foundBooks.error === undefined ? foundBooks.map((book) => (
               <Book 
                 book={book}
                 key={book.id}
                 changeBookShelf={changeBookShelf}
+                getShelf={getShelf}
               />
             )) : ""}
           </ol>

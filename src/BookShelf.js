@@ -3,7 +3,7 @@ import Book from './Book'
 
 class BookShelf extends React.Component {
   render() {
-    const {books, title, changeBookShelf} = this.props
+    const {books, title, changeBookShelf, getShelf} = this.props
     return (
       <div className="bookshelf">
         <h2 className="bookshelf-title">{title}</h2>
@@ -14,6 +14,7 @@ class BookShelf extends React.Component {
                 book={book}
                 key={book.id}
                 changeBookShelf={changeBookShelf}
+                getShelf={getShelf}
               />
             ))}
           </ol>
