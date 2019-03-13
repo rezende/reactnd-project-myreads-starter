@@ -8,9 +8,10 @@ class SearchBooks extends React.Component {
     query: '',
     foundBooks: []
   }
-  updateQuery = (query) => {
+  updateQuery = (event) => {
+    const query = event.target.value
     this.setState(() => ({
-      query: query.trim()
+      query: query
     }))
     BooksAPI.search(query).then((books) => {
       this.setState({
@@ -19,7 +20,7 @@ class SearchBooks extends React.Component {
     })
   }
   render() {
-    const { query, foundBooks } = this.state
+    const { foundBooks } = this.state
     const { changeBookShelf, getShelf } = this.props
     return (
       <div className="search-books">
@@ -29,8 +30,8 @@ class SearchBooks extends React.Component {
             <input 
               type="text" 
               placeholder="Search by title or author"
-              value={query}
-              onChange={(e) => this.updateQuery(e.target.value)}
+              value={this.state.query}
+              onChange={this.updateQuery}
             />
           </div>
         </div>
