@@ -34,19 +34,20 @@ class BooksApp extends React.Component {
     return shelf.filter(b => b.id !== bookId)
   }
   changeBookShelf = (book, newShelf) => {
-    if (newShelf !== "none") {
-      this.state[newShelf].push(book)
-    }
-    const previousShelf = book.shelf
-    if (previousShelf !== undefined) {
-      this.setState((previousState) => {{
-        let obj = {}
-        obj[previousShelf] = this.removeFromShelf(book, previousState[previousShelf])
-        return obj
-      }})
-    }
-    BooksAPI.update(book, newShelf)
-    book.shelf = newShelf
+    BooksAPI.update(book, newShelf).then(() => {
+      if (newShelf !== "none") {
+        this.state[newShelf].push(book)
+      }
+      const previousShelf = book.shelf
+      if (previousShelf !== undefined) {
+        this.setState((previousState) => {{
+          let obj = {}
+          obj[previousShelf] = this.removeFromShelf(book, previousState[previousShelf])
+          return obj
+        }})
+      }
+      book.shelf = newShelf
+    }) 
   }
   componentDidMount() {
     BooksAPI.getAll()
